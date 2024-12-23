@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>記憶配對遊戲</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-image: url('image/math.png'); /* 替換為你的背景圖片 */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+        .container {
+            text-align: center;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(4, 100px);
+            grid-gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .card {
+            width: 100px;
+            height: 100px;
+            background-color: #ccc;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: #fff;
+            cursor: pointer;
+            position: relative;
+            transition: background-color 0.3s;
+        }
+        .card.flipped {
+            background-color: #fff;
+            color: #000;
+        }
+        .card img {
+            width: 80%;
+            height: auto;
+        }
+        .timer, .stats {
+            font-size: 1.2rem;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>記憶配對遊戲</h1>
+        <div class="timer" id="timer">計時器: 0秒</div>
+        <div class="stats" id="stats">錯誤次數: 0 | 總翻牌次數: 0</div>
+        <div class="grid" id="gameBoard"></div>
+    </div>
+
+    <script>
+        const images = ['🍎', '🍌', '🍒', '🍇', '🍓', '🍉', '🍍', '🥭'];
+        let cards = [...images, ...images]; // 每個圖像兩次
+        let flippedCards = [];
+        let matchedPairs = 0;
+        let startTime;
+        let timerInterval;
+        let totalFlips = 0;
+        let wrongFlips = 0;
+
+        function initializeGame() {
+            shuffle(cards);
+            const gameBoard = document.getElementById('gameBoard');
+            gameBoard.innerHTML = '';
+            flippedCards = [];
+            matchedPairs = 0;
+            totalFlips = 0;
+            wrongFlips = 0;
+
+            document.getElementById('stats').textContent = `錯誤次數: 0 | 總翻牌次數: 0`;
+
+            cards.forEach((image, index) => {
+                const cardElement = document.createElement('div');
+                cardElement.classList.add('card');
+                cardElement.setAttribute('data-index', index);
+                cardElement.addEventListener('click', handleCardClick);
+                gameBoard.appendChild(cardElement);
+            });
+
+            startTime = new Date();
+            startTimer();
+        }
+
+        function startTimer() {
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                const elapsed = Math.floor((new Date() - startTime) / 1000);
+                document.getElementById('timer').textContent = `計時器: ${elapsed}秒`;
+            }, 1000);
+        }
+
+        function handleCardClick(event) {
+            const clickedCard = event.currentTarget;
+            const index = clickedCard.getAttribute('data-index');
+            const image = cards[index];
+
+            if (flippedCards.length === 2 || clickedCard.classList.contains('flipped')) {
+                return;
+            }
+
+            clickedCard.classList.add('flipped');
+            clickedCard.textContent = image;
+            flippedCards.push({ index, element: clickedCard });
+            totalFlips++;
+            updateStats();
+
+            if (flippedCards.length === 2) {
+                checkForMatch();
+            }
+        }
+
+        function checkForMatch() {
+            const [firstCard, secondCard] = flippedCards;
+            const isMatch = cards[firstCard.index] === cards[secondCard.index];
+
+            if (isMatch) {
+                matchedPairs++;
+                flippedCards = [];
+                if (matchedPairs === images.length) {
+                    endGame();
+                }
+            } else {
+                wrongFlips++;
+                updateStats();
+                setTimeout(() => {
+                    firstCard.element.classList.remove('flipped');
+                    secondCard.element.classList.remove('flipped');
+                    firstCard.element.textContent = '';
+                    secondCard.element.textContent = '';
+                    flippedCards = [];
+                }, 1000);
+            }
+        }
+
+        function endGame() {
+            clearInterval(timerInterval);
+            // 顯示所有卡片
+            document.querySelectorAll('.card').forEach((card, index) => {
+                card.textContent = cards[index];
+                card.classList.add('flipped');
+            });
+
+            const elapsed = Math.floor((new Date() - startTime) / 1000);
+            const playAgain = confirm(
+                `恭喜！你完成了遊戲！\n花了 ${elapsed} 秒。\n錯誤次數: ${wrongFlips}。\n總翻牌次數: ${totalFlips}。\n是否重新開始？`
+            );
+
+            if (playAgain) {
+                initializeGame();
+            } else {
+                window.location.href = '/index.html';
+;
+            }
+        }
+
+        function updateStats() {
+            document.getElementById('stats').textContent = `錯誤次數: ${wrongFlips} | 總翻牌次數: ${totalFlips}`;
+        }
+
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        initializeGame();
+    </script>
+</body>
+</html>

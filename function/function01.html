@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redirect Buttons Example</title>
+    <style>
+        /* 設定整個頁面使用Flexbox來居中對齊內容 */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+
+            /* 背景圖片設定 */
+            background-image: url('/image/Taiwan.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        /* 將內容放在一個容器中 */
+        .container {
+            text-align: center;
+            background-color: rgba(255, 255, 255, 0.8); /* 半透明白色背景，讓按鈕更清晰 */
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 90%; /* 限制容器的最大寬度 */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 添加陰影效果 */
+        }
+
+        /* 調整按鈕的樣式 */
+        button {
+            display: block;
+            margin: 10px auto;
+            padding: 15px 25px; /* 調整按鈕的邊距以使大小一致 */
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            background-color: #007BFF; /* 按鈕背景顏色 */
+            color: white; /* 按鈕文字顏色 */
+            transition: background-color 0.3s; /* 背景顏色變化過渡效果 */
+            width: 200px; /* 設定所有按鈕的寬度相同 */
+            height: 50px; /* 設定所有按鈕的高度相同 */
+        }
+
+        button:hover {
+            background-color: #0056b3; /* 滑鼠懸停時的顏色變化 */
+        }
+
+        /* 響應式設計 */
+        @media (max-width: 600px) {
+            button {
+                font-size: 14px;
+                padding: 10px 20px;
+            }
+
+            h1 {
+                font-size: 20px;
+            }
+        }
+
+        /* 確保課表圖片不會裁切過多，使用object-fit來適應圖片大小 */
+        .class-image-container {
+            display: none; /* 預設隱藏課表容器 */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8); /* 黑色半透明背景 */
+            z-index: 1000; /* 顯示在其他內容上方 */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .class-image {
+            max-height: 90%; /* 控制圖片最大高度 */
+            object-fit: contain; /* 保持圖片完整顯示 */
+            border-radius: 10px; /* 圓角效果 */
+        }
+
+        .close-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #FF5733; /* 關閉按鈕背景顏色 */
+            color: white; /* 關閉按鈕文字顏色 */
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .close-button:hover {
+            background-color: #C70039; /* 滑鼠懸停時的顏色變化 */
+        }
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // 第一個按鈕：跳轉到南台FlipClass
+            document.getElementById('button1').addEventListener('click', () => {
+                window.open('https://flipclass.stust.edu.tw/', '_blank');
+            });
+
+            // 第二個按鈕：查看課表，顯示圖片模態
+            document.getElementById('button2').addEventListener('click', () => {
+                const classImageContainer = document.querySelector('.class-image-container');
+                classImageContainer.style.display = 'flex';
+            });
+
+            // 第三個按鈕：跳轉到zuvio
+            document.getElementById('button3').addEventListener('click', () => {
+                window.open('https://www.zuvio.com.tw/', '_blank');
+            });
+
+            // 關閉課表按鈕
+            document.querySelector('.close-button').addEventListener('click', () => {
+                document.querySelector('.class-image-container').style.display = 'none';
+            });
+
+            // 返回首頁的按鈕
+            document.getElementById('button4').addEventListener('click', () => {
+                window.location.href = '/index.html'; // 返回 index.html
+            });
+        });
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>你想做什麼?</h1>
+        <button id="button1">南台FlipClass</button>
+        <button id="button2">查看課表</button>
+        <button id="button3">zuvio</button>
+        <button id="button4">返回首頁</button>
+    </div>
+
+    <!-- 顯示課表圖片的模態視窗 -->
+    <div class="class-image-container">
+        <button class="close-button">× 關閉</button>
+        <img src="/image/class.jpg" alt="課表" class="class-image">
+    </div>
+</body>
+</html>
